@@ -1,0 +1,9 @@
+ev
+ev+Plu
+ev+Loc
+ev+Gen
+ev+Plu+Loc
+ev+Plu+Gen
+ev+Loc+Ki
+ev+Gen+Ki
+araba+Loc+Ki+Plu+Gen+Ki+Plu+Loc

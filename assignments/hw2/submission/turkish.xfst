@@ -1,0 +1,55 @@
+! Submission by Berk Özbalcı.
+
+! Consonsants, vowels, vowel features, etc.
+define Vowel a | e | i | o | u | ü | ö | ı ;
+define Cons  b | c | ç | d | f | g | ğ | h | j | k | l | m | n | p | r | s | ş | t | v | y | z ;
+define Lang   [Vowel | Cons] ;
+define +high  i | u | ı | ü ;
+define +low   a | ö ;
+define +back  ı | a | o | u ;
+define +round ö | ü | o | u ;
+define -high  [Vowel - %+high]  ;
+define -low   [Vowel - %+low]   ;
+define -back  [Vowel - %+back]  ;
+define -round [Vowel - %+round] ;
+
+! Roots.
+define ROOT  {ev}
+           | {araba}
+           | {adam}
+           | {fasulye}
+           | {bamya}
+           | {enginar}
+           ;
+
+! Suffix forms.
+define RPlu %+Plu -> l A r ;
+define RLoc %+Loc -> d A ;
+define RGen %+Gen -> NG I n ;
+define RKi  %+Ki  -> k i N ;
+
+! Phonological rules.
+define RA A -> %-high & %-round & %-back || %-back Cons* _ ,,
+          A -> %-high & %-round & %+back || %+back Cons* _ ;
+
+define RI I -> %+high & %+round & %+back || [%+round & %+back] Cons* _ ,,
+          I -> %+high & %+round & %-back || [%+round & %-back] Cons* _ ,,
+          I -> %+high & %-round & %+back || [%-round & %+back] Cons* _ ,,
+          I -> %+high & %-round & %-back || [%-round & %-back] Cons* _ ;
+
+define RNG NG -> 0 || Cons _ ,,
+           NG -> n || Vowel _ ;
+
+define RN N -> n || _ %+Loc ,,
+          N -> 0 || _ \%+Loc , _ .#.;
+
+! Morphotactic machine (yeah).
+define MAIN ROOT [ %+Plu | [ %+Loc | %+Gen | %+Plu [ %+Loc | %+Gen ] ]
+                           [ %+Ki [ %+Loc | %+Gen | %+Plu [ %+Loc | %+Gen ] ] ] *
+                           [ %+Ki [ %+Plu | %+Loc | %+Gen | %+Plu [ %+Loc | %+Gen ] ] | 0 | %+Ki ]
+                         | %+Loc | %+Gen | %+Plu [ %+Loc | %+Gen ] ] | ROOT ;
+
+read regex MAIN
+       .o. RPlu .o. RGen .o. RLoc .o. RKi
+       .o. RN .o. RNG .o. RA .o. RI .o. RA
+       ;
